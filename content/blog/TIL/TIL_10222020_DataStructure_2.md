@@ -103,7 +103,7 @@ class LinkedList {
     if (index > this._size-1) {
       return undefined
     }
-    while (indx !== index) {
+    while (indx !== index)
       cur = cur.next
       indx++
     }
