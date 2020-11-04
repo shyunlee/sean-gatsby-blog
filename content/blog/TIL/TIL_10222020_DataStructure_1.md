@@ -21,31 +21,31 @@ draft: false
 
   ## Stack 구현하기
 
-  ```
+  ```js
   class Stack {
-      constructor() {
-        this.storage = {};
-        this.top = 0;
-      }
+    constructor() {
+      this.storage = {}
+      this.top = 0
+    }
 
-      size() {
-        return this.top
-      }
+    size() {
+      return this.top
+    }
 
-      push(element) {
-        this.storage[this.top] = element
-        this.top++
-      }
+    push(element) {
+      this.storage[this.top] = element
+      this.top++
+    }
 
-      pop() {
-        let result = this.storage[this.top-1]
-        delete this.storage[this.top-1]
-        this.top--
-        if(this.top < 0) {
-          this.top = 0
-        }
-        return result
+    pop() {
+      let result = this.storage[this.top - 1]
+      delete this.storage[this.top - 1]
+      this.top--
+      if (this.top < 0) {
+        this.top = 0
       }
+      return result
+    }
   }
   ```
 
@@ -64,30 +64,28 @@ draft: false
 
 ## Queue 구현하기
 
-```
+```js
 class Queue {
-    constructor() {
-      this.storage = {};
-      this.front = 0;
-      this.rear = 0;
-    }
+  constructor() {
+    this.storage = {}
+    this.front = 0
+    this.rear = 0
+  }
 
-    size() {
-      return Object.keys(this.storage).length
-    }
+  size() {
+    return Object.keys(this.storage).length
+  }
 
-    enqueue(element) {
+  enqueue(element) {
+    this.storage[this.rear] = element
+    this.rear++
+  }
 
-      this.storage[this.rear] = element
-      this.rear++
-      }
-
-    dequeue() {
-
-      let result = this.storage[this.front]
-      delete this.storage[this.front]
-      this.front++
-      return result
-    }
+  dequeue() {
+    let result = this.storage[this.front]
+    delete this.storage[this.front]
+    this.front++
+    return result
+  }
 }
 ```

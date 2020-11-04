@@ -33,65 +33,65 @@ draft: false
 
 ## Hash Table 코드로 구현하기
 
-```
+```js
 const LimitedArray = function(limit) {
-  const storage = [];
+  const storage = []
 
-  const limitedArray = {};
+  const limitedArray = {}
   limitedArray.get = function(index) {
-    checkLimit(index);
-    return storage[index];
-  };
+    checkLimit(index)
+    return storage[index]
+  }
   limitedArray.set = function(index, value) {
-    checkLimit(index);
-    storage[index] = value;
-  };
+    checkLimit(index)
+    storage[index] = value
+  }
   limitedArray.each = function(callback) {
     for (let i = 0; i < storage.length; i++) {
-      callback(storage[i], i, storage);
+      callback(storage[i], i, storage)
     }
-  };
+  }
 
   var checkLimit = function(index) {
     if (typeof index !== 'number') {
-      throw new Error('setter requires a numeric index for its first argument');
+      throw new Error('setter requires a numeric index for its first argument')
     }
     if (limit <= index) {
-      throw new Error('Error trying to access an over-the-limit index');
+      throw new Error('Error trying to access an over-the-limit index')
     }
-  };
+  }
 
-  return limitedArray;
-};
+  return limitedArray
+}
 ```
 
 LimitedArray 함수는 결과값으로 객체를 리턴하고 Hash Table의 storage 역할을 하는 임의 배열을 생성한다. 리턴되는 객체는 storage역할을 하는 배열에 data를 추가, 접근, 각 배열의 요소를 돌면서 어떤 작업을 할 수 있는 함수를 갖고있는 객체이다.
 
-```
+```js
 const hashFunction = function(str, max) {
-  let hash = 0;
+  let hash = 0
   for (let i = 0; i < str.length; i++) {
-    hash = (hash << 5) + hash + str.charCodeAt(i);
-    hash &= hash; // Convert to 32bit integer
-    hash = Math.abs(hash);
+    hash = (hash << 5) + hash + str.charCodeAt(i)
+    hash &= hash // Convert to 32bit integer
+    hash = Math.abs(hash)
   }
-  return hash % max;
-};
+  return hash % max
+}
 ```
 
 data를 받아서 그 data 에 대한 index값을 리턴하는 hash function을 만든다.
 
-```
+```js
 class Node {
   constructor(key, value) {
     this.key = key
-    this.value = value;
-    this.next = null;
+    this.value = value
+    this.next = null
   }
 }
 
 class LinkedList {
-  constructor () {
+  constructor() {
     this.head = null
     this.tail = null
     this._size = 0
@@ -101,21 +101,20 @@ class LinkedList {
 
 Hash Table Bucket에 data가 저장될 때 각 Bucket은 Linked List의 형태로 저장되고 data는 그 Linked List에 Head값으로 저장된다.
 
-```
+```js
 class HashTable {
   constructor() {
-    this._size = 0;
-    this._limit = 8;
-    this._storage = LimitedArray(this._limit);
+    this._size = 0
+    this._limit = 8
+    this._storage = LimitedArray(this._limit)
   }
 
   insert(key, value) {
-
-    if (this._size+1 > this._limit*3/4) {
-      this._resize(this._limit*2)
+    if (this._size + 1 > (this._limit * 3) / 4) {
+      this._resize(this._limit * 2)
     }
 
-    const index = hashFunction(key, this._limit);
+    const index = hashFunction(key, this._limit)
     // 1. 해싱충돌이 없을 때
     // 1-1. array storage 안의 index 값에 value 가 들어 있는지 확인해서 아무것도 안들어있으면 linked list 로 생성해서 넣는다.
     // 1-2. linked list 의 head 값에 받아온 key 와 value를 갖고 있는 노드를 생성하여 할당한다.
@@ -126,13 +125,13 @@ class HashTable {
       this._storage.get(index)._size++
       this._size++
     } else {
-    // 2. 해싱충돌이 있을 때
-    // 2-1. 해당 인덱스에 linkedList 의 head값을 바꾸고 이전 head값을 새로운 head 의 next 값으로 지정한다.
-    // 2-2-1. hash table 안에 이미 똑같은 key를 갖고 있는 node가 있을 때
-    let linkedList = this._storage.get(index)
-    let current = linkedList.head
+      // 2. 해싱충돌이 있을 때
+      // 2-1. 해당 인덱스에 linkedList 의 head값을 바꾸고 이전 head값을 새로운 head 의 next 값으로 지정한다.
+      // 2-2-1. hash table 안에 이미 똑같은 key를 갖고 있는 node가 있을 때
+      let linkedList = this._storage.get(index)
+      let current = linkedList.head
       if (this.retrieve(key)) {
-        for (let i = 0; i<linkedList._size; i++) {
+        for (let i = 0; i < linkedList._size; i++) {
           if (current.key === key) {
             current.value = value
           } else {
@@ -140,7 +139,7 @@ class HashTable {
           }
         }
       } else {
-    // 2-2-2. hash table안에 똑같인 key 값이 없을 때
+        // 2-2-2. hash table안에 똑같인 key 값이 없을 때
         linkedList.head = new Node(key, value)
         linkedList.head.next = current
         linkedList._size++
@@ -149,17 +148,15 @@ class HashTable {
           linkedList.tail = current
         }
       }
-
     }
-
   }
 
-   retrieve(key) {
-    const index = hashFunction(key, this._limit);
+  retrieve(key) {
+    const index = hashFunction(key, this._limit)
 
     let linkedList = this._storage.get(index)
     let current = linkedList.head
-    for (let i = 0; i<linkedList._size; i++) {
+    for (let i = 0; i < linkedList._size; i++) {
       if (current.key === key) {
         return current.value
       } else {
@@ -169,10 +166,10 @@ class HashTable {
   }
 
   remove(key) {
-    if (this._limit > 8 && this._size-1 < this._limit/4) {
-      this._resize(this._limit/2)
+    if (this._limit > 8 && this._size - 1 < this._limit / 4) {
+      this._resize(this._limit / 2)
     }
-    const index = hashFunction(key, this._limit);
+    const index = hashFunction(key, this._limit)
     if (this.retrieve(key)) {
       let linkedList = this._storage.get(index)
       let previous = linkedList.head
@@ -181,16 +178,16 @@ class HashTable {
         linkedList._size--
         this._size--
       } else {
-        for (let i = 0; i<linkedList._size; i++) {
+        for (let i = 0; i < linkedList._size; i++) {
           if (previous.next.key === key) {
             previous.next = previous.next.next
-            if (i === linkedList._size-1) {
+            if (i === linkedList._size - 1) {
               linkedList.tail = previous
             }
             linkedList._size--
             this._size--
           } else {
-            previous=previous.next
+            previous = previous.next
           }
         }
       }
@@ -203,17 +200,16 @@ class HashTable {
     this._storage = LimitedArray(this._limit)
     this._size = 0
     let hash = this
-    originStorage.each(function (linkedList) {
+    originStorage.each(function(linkedList) {
       if (linkedList) {
         let current = linkedList.head
-        for (let j = 0; j<linkedList._size; j++) {
+        for (let j = 0; j < linkedList._size; j++) {
           hash.insert(current.key, current.value)
           current = current.next
         }
       }
     })
   }
-
 }
 ```
 

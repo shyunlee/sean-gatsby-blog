@@ -28,7 +28,7 @@ draft: false
 
 ## Sinlgy-Linked List 코드로 구현하기
 
-```
+```js
 class Node {
   constructor(value) {
     this.value = value;
