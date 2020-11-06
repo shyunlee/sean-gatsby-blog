@@ -1,103 +1,247 @@
 ---
-title: '[TIL-10192020] NPM'
-date: 2020-10-19
+title: '[TIL-10202020] About This'
+date: 2020-10-20
 # 16:21:13
 category: 'TIL'
 draft: false
 ---
 
-## What is npm?
+# This
 
-npm 은 Node Pakcage Manager 의 약자로서 nodejs로 만들어진 모듈을 웹에서 받아서 설치하고 각 모듈의 기능에 맞게 내 프로젝트에 쉽게 가져와 쓸 수 있도록 하는 프로그램이다. npm은 단순히 모듈을 갖고와서 쓰는 목적 이외에도 여러사람과 협업할 때에도 유용하게 쓰인다. 프로젝트를 npm의 관리하에 등록을 하게 되면 package.json이라는 파일이 생기는데 이는 어떤 프로젝트에 대해서 여러사람이 작업할 때 그 프로젝트를 개발하기 위해서 모든 파일을 복사해서 받아올 필요없이 package.json 파일만 있으면 필요한 모듈을 각자가 알아서 npm을 통해 받을 수 있게 때문에 프로젝트를 공유함에 있어서 효율을 높일 수 있다.
+- `this`는 함수 실행시 invocation 방식에 따라 결정되는 객체를 가르키는 키워드이다.
+- 함수실행시, 실행되는 excution context에 따라 this는 다르게 설정된다.
 
-## npm command line
+## this를 결정하는 다섯가지 Function Invocation 방식
 
-- 프로젝트를 npm 으로 관리한다.
+1. 📌 Global
 
-```
-npm init
-```
+   - global 영역에서 this는 browser 기준으로 window객체, node.js기준으로 module.exports 객체를 바라본다.
 
-- npm을 통해 필요한 모듈을 설치한다.
+     ```js
+     console.log(this)
+     ```
 
-```
-npm i [package_name] // default 로 모듈을 프로젝트에 한정하여 install 한다.
-npm i -g [package_name] // 설치하는 모듈이 모든 프로젝트에 적용될 수 있게 install globally
-```
+2. 📌 Function Invocation
 
-- check npm version
+   - global 영역에서 생성한 함수를 실행 할 때는 browser 기준으로 window 객체, node.js기준으로 global 객체를 바라본다.
 
-```
-npm --v
-//or
-npm -version
-```
+   ```js
+   function foo() {
+     console.log(this)
+   }
 
-- check modules installed in project
+   foo()
+   ```
 
-```
-npm ls // able to see all packages installed
-npm ls --depth=0 // able to see top packages installed
-```
+3. 📌 Method Invocation
 
-- uninstall package
+   - 객체의 property로서 함수를 저장하고 있을 때 object.key() 방식으로 그 함수를 호출하여 실행하게 되면 함수 property를 갖고있는 그 객체가 this가 된다.
+   - `object.method()` 방식으로 호출하는 방법
 
-```
-npm uninstall [package_name]
-//or
-npm r [package_name]
+   - case 1
 
-// uninstall package globally
-npm r -g [package_name]
-```
+   ```js
+   const obj = {
+     foo: function() {
+       console.log(this)
+     },
+   }
 
-## package.json
+   obj.foo()
+   /// obj
+   ```
 
-package.json은 npm을 통해 관리되는 프로젝트의 catalogue 라고 할 수 있다. 그 프로젝트에 어떤 모듈패키지들이 설치되고 사용되고 있는지 한눈에 볼 수 있는 파일이다.
-github 에서 어떤 프로젝트를 clone해서 받았을 때 package.json 에 명시되어 있는 모든 패키지는 다음과 같이 일괄 설치 할 수 있다.
+   - case 2
 
-```
-npm i
-```
+   ```js
+   function student(name, subject) {
+     return {
+       name: name,
+       subject: subject,
+       learn: function() {
+         console.log(this.name + ' is studying ' + subject)
+       },
+       foo: function() {
+         console.log(this)
+       },
+     }
+   }
 
-- scripts
-  package.json 에 있는 scripts 부분은 설치된 모듈들을 특정 목적에 따라 반복적, 주기적으로 실행할 필요가 있는 경우 그 명령어를 객체의 형태로 저장하여 간단하게 실행 할 수 있게 한다.
-  실행 할 때는 다음과 같은 방법으로 cli에서 실행한다.
+   let john = student('john', 'coding')
+   john.learn() // john is studying coding
+   john.foo() // {name:'john', subject:'coding', learn:fn, foo:fn} ==> john 자신 객체
+   ```
 
-```
-npm run [key]
-```
+4. 📌 `new` keyword를 이용한 constructor invocation
 
-- dependencies
-  package.json에 있는 dependencies 는 그 프로젝트가 구동함에 있어서 반드시 필요한 package module들을 명시한다.
-  어떤 package 를 설치 할 때 기본값으로 dependencies 로 설치가 된다.
-- devDependendies
-  package.json에 있는 devDependencies는 프로젝트가 구동됨에 있어서 반드시 필요하지는 않지만 개발과정에서 도움을 받기 위한 package 들을 명시한다.
-  이러한 package들을 설치할 때는 devDepenedencies 로 설치 될 수 있게 한다.
+   - new 키워드를 통해 생성된 instance가 this로 설정된다.
+   - Object Oriented Programming에서 주로 사용한다.
 
-```
-npm install --save-dev [package_name]
-//or
-npm install -D [package_name]
-```
+   ```js
+   class Student {
+     constructor(name) {
+       this.name = name
+     }
 
-## npx
+     learn() {
+       console.log(this.name + ' is studying coding')
+     }
+   }
 
-- npx 는 node package excute의 약자로 어떤 노드 모듈 패키지를 설치 없이 일회성으로 실행 할 수 있는 npm이 갖고 있는 도구이다.
-- npx 는 npm run-script 명령어 없이 패키지를 실행시킬 수 있다.
-- npx 는 다른 node.js 버전으로 명령을 실행하게 할 수 있다.
+   let john = new Student('John')
+   john.learn() // John is studying coding
+   john.name // John
+   ```
 
-## nvm
+5. 📌 .call or .apply 와 같은 javascript built-in method를 이용하여 호출
 
-- nvm은 node version manager 의 약자로 node.js 버젼을 관리 할 수 있는 도구이다.
-- node.js의 버전에 따라 어떤 프로젝트가 실행이 될 수 있고 버전이 안맞아서 실행이 안되는 경우도 있다. 이 때 nvm을 통해서 버전을 바꿔가면서 실행 할 수 있다.
-- 다양한 프로젝트에 대한 호환문제를 간단하게 해결 할 수 있다.
+   - 함수를 호출, 실행 할 때 this값을 force로 어떤 특정 객체로 지정하여 실행 할 때 사용
+   - .call & .apply method 는 첫번째 인자로 this값을 받는다.
+   - .apply는 두번재 인자로 Array Type의 인자를 받는다.
+   - `fn.call(this, parameter1, parameter2, ..)`
+   - `fn.apply(this, array parameter1, array parameter2, ..)`
+   - JavaScript Built-in Prototype의 method를 차용하여 this를 지정하여 실행 할 때,
 
-```
-nvm install [version] // ->> install specific node version
-nvm ls // ->> check and see all node version installed
-nvm use [version] // ->> change version
-nvm current // ->> check the version being used
-nvm uninstall [version] // ->> uninstall unnecessary version
-nvm alias default [version] // ->> set specific version as default version
-```
+   ```js
+   let phoneNumber = '010-1234-5678'
+   phoneNumber.split('-')
+   String.prototype.split.call(phoneNumber, '-')
+   ''.split.call(phoneNumber, '-')
+   // 위의 세가지 방법의 실행 결과는 같다
+   ```
+
+   - Array Type이 아닌 Array-like Type의 자료구조에 Array.prototype method를 차용하여 사용할 때,
+
+   ```js
+   let allDivs = document.querySelectorAll('div') // Node List 라는 유사배열이다
+   Array.prototype.map.call(allDivs, function(el) {
+     return el.className
+   })
+   ```
+
+   - apply를 사용하여 array type에 method를 적용할 때
+
+   ```js
+   let arr = [1, 2, 3, 4]
+   Math.max.apply(null, arr) // Math는 생성자가 아니므로 this를 설정할 필요가 없다.
+   Math.max(...arr) // rest parameter를 이용하여 배열을 인자로서 사용할 수 있다.
+   ```
+
+   - Object Oriented Programming에서 많이 사용되는 예제
+
+   ```js
+   function PriceTag(name, price) {
+     this.name = name
+     this.price = price
+   }
+
+   function Food(name, price) {
+     PriceTag.call(Food, name, price)
+     this.catetory = food
+   }
+
+   let pizza = Food('peperoni', 15)
+   //pizza 의 name은 'peperoni'이고 price는 15 이다
+   ```
+
+6. ## 📌 binding `this` by using .bind method
+
+   - .bind method는 .call, .apply처럼 this 값을 bind하지만 함수를 바로 실행하는것이 아니라 this값만 binding한다.
+   - `fn.bind(this, parameter1, parameter2, ..)`
+   - Event Handler를 생성할 때 this를 bind할 때,
+
+   ```js
+   ;<button id="btn">click</button>
+   let btn = document.querySelector('#btn')
+   btn.onclick = handleClick
+
+   let sayHello = {
+     say: 'Hello, welcome!',
+   }
+
+   function handleClick() {
+     console.log(this, this.say)
+   }
+   ```
+
+   여기서 this는 btn이므로 button을 클릭하면 button HTML element 를 출력한다. 그럼 this값을 다른 객체로 bind해서 사용해보자.
+
+   ```js
+   btn.onclick = handleClick.bind(sayHello)
+
+   function clickAlert() {
+     alert(this, this.sayHi)
+   }
+   ```
+
+   .bind method를 사용하여 this값을 `sayHello`로 지정하였다. button을 클릭하면 this는 sayHello 객체를 바라보고 있고, this.sayHi에 접근 가능하여 'Hello, welcome' 을 출력하는 것을 확인 할 수 있다.
+   이처럼 함수를 바로 실행하지 않고 어떤 action이 있을 때 실행되야할 경우에 this값을 설정해줄 때 bind를 사용한다.
+
+   - `setTimeout` 을 사용할 때 bind 사용
+
+     - setTimout은 callback함수와 시간을 인자로 받고 인자로 받은 시간만큼 함수실행을 지연을 시켜서 callback함수를 비동기적으로 실행할 수 있는 JavaScript Built-in Function이다.
+     - setTimeout 은 this를 항상 window 객체를 this값으로 binding 하는 특징이 있다.
+     - setTimout 예제,
+
+     ```js
+     class Shape {
+       constructor(width, height) {
+         this.width = width
+         this.height = height
+       }
+
+       printArea() {
+         console.log(this.width * this.height)
+       }
+
+       printSync() {
+         this.printArea()
+       }
+
+       printAsync() {
+         setTimeout(this.printArea, 3000)
+       }
+     }
+     ```
+
+     class Shape을 생성하고 넓이를 계산해서 출력하는 함수, 그 함수를 동기적으로 실행하는 함수, setTimout을 이용하여 비동기적으로 실행하는 함수등의 method들을 생성
+
+     ```js
+     let rectangle = new Shape(10, 5)
+     rectangle.printArea()
+     rectangle.printSync()
+     rectangle.printAsync()
+     ```
+
+     위와 같이 실행하면 printAsync()를 실행 했을 때 인자로 받은 시간후에 callback함수가 작동은 하지만 원하는값이 출력되지 않는것을 확인 할 수 있다. 이유는 setTimeout에서 this가 rectangle instance가 아닌 window 객체를 바라보고 있기 때문이다. 그럼 bind를 사용하여 setTimeout의 this를 instance로 binding해서 실행해보자
+
+     ```js
+     printAsync() {
+       setTimeout(this.printArea.bind(this, 3000)
+     }
+     ```
+
+     printAsync method 를 위와 같이 수정하면 원하던 대로 잘 작동하는 것을 확인 할 수 있다.
+     **또 다른 solution으로는 Arrow Function 표현식으로 함수를 선언하는 것이다.**
+
+     ```js
+     printAsync() {
+       setTimeout(() => this.printArea(), 3000)
+     }
+     ```
+
+   * Arrow Function을 사용할 때 this를 따로 bind하지 않아도 잘 작동이 되는 이유는 일반적으로 this는 함수가 호출(function invocation) 될 때 그 함수의 호출 방식에 따라서 this 값이 설정되는데 Arrow Function은 호출 될 때 this값을 설정하지 않기 때문이다. 대신 Arrow Function을 둘러싸는 scope의 범위(lexical scope)의 this를 사용한다. 현재 범위에 this값이 존재하지 않을 때는 상위로 올라가면서 this값을 찾는다.  
+     _다음의 MDN공식문서 발췌 참고_
+
+   - 화살표 함수는 자신의 `this`가 없습니다. 대신 화살표 함수를 둘러싸는 렉시컬 범위(lexical scope)의 `this`가 사용됩니다. 화살표 함수는 일반 변수 조회 규칙(normal variable lookup rules)을 따릅니다. 때문에 현재 범위에서 존재하지 않는 `this`를 찾을 때, 화살표 함수는 바깥 범위에서 `this`를 찾는것으로 검색을 끝내게 됩니다.
+     따라서 다음 코드에서 `setInterval`에 전달된 함수 내부의 `this`는 `setInterval`을 포함한 function의 `this`와 동일한 값을 갖습니다.
+
+   ```js
+   function Person() {
+     this.age = 0
+
+     setInterval(() => {
+       this.age++ // this는 상위범위의 Person 객체를 참조
+     }, 1000)
+   }
+   ```
