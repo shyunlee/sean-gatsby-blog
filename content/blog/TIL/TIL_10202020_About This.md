@@ -179,7 +179,7 @@ draft: false
 
    - `setTimeout` 을 사용할 때 bind 사용
 
-     - setTimout은 callback함수와 시간을 인자로 받고 인자로 받은 시간만큼 함수실행을 지연을 시켜서 callback함수를 비동기적으로 실행할 수 있는 JavaScript Built-in Function이다.
+     - setTimout은 callback함수와 시간을 인자로 받고 인자로 받은 시간만큼 함수실행을 지연을 시켜서 callback함수를 비동기적으로 실행할 수 있는 Web APIs 중에 하나이다.
      - setTimeout 은 this를 항상 window 객체를 this값으로 binding 하는 특징이 있다.
      - setTimout 예제,
 
