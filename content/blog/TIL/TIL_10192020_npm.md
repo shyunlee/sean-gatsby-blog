@@ -2,7 +2,7 @@
 title: '[TIL-10192020] NPM'
 date: 2020-10-19
 # 16:21:13
-category: 'TIL', 'CMD'
+category: 'TIL'
 draft: false
 ---
 
