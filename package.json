@@ -11,7 +11,6 @@
     "gatsby": "^2.26.1",
     "gatsby-image": "^2.5.0",
     "gatsby-plugin-feed": "^2.7.0",
-    "gatsby-plugin-google-analytics": "^2.5.0",
     "gatsby-plugin-lodash": "^3.4.0",
     "gatsby-plugin-manifest": "^2.6.0",
     "gatsby-plugin-offline": "^2.0.25",
@@ -83,7 +82,7 @@
     "format": "prettier --trailing-comma es5 --no-semi --single-quote --write 'src/**/*.js' 'src/**/*.md'",
     "develop": "gatsby develop",
     "start": "npm run develop",
-    "build": "npm run build",
+    "build": "gatsby build",
     "lh": "lighthousebot",
     "fix-semi": "eslint --quiet --ignore-pattern node_modules --ignore-pattern public --parser babel-eslint --no-eslintrc --rule '{\"semi\": [2, \"never\"], \"no-extra-semi\": [2]}' --fix gatsby-node.js"
   }
